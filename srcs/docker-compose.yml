@@ -1,0 +1,55 @@
+version: "3"
+services:
+    mariadb:
+        build:
+            context: ./srcs/requirements/mariadb
+        container_name: mariadb
+        ports:
+            - "3306:3306"
+        restart: always
+        volumes:
+            - mariadb_data:/var/lib/mysql
+        env_file:
+            - .env
+        networks:
+            - my_network
+
+networks:
+    my_network:
+
+volumes:
+    mariadb_data:
+        driver_opts:
+            type: none
+            o: bind
+            device: /Users/ael-mouz/Desktop/inception/data/mariadb
+
+
+    # wordpress-data:
+    #     driver: 
+    #         - local
+    #     driver_opts:
+    #         type: 
+    #             - 'none'
+    #         o: 
+    #             - 'bind'
+    #         device: 
+    #             - '~/data/wordpress'
+
+    # nginx:
+    #     build:
+    #         - ./srcs/requirements/nginx
+    #     ports:
+    #         - "443:443"
+    #     networks:
+    #         - my_network
+    #     depends_on:
+    #         - wordpress
+
+    # wordpress:
+    #     build:
+    #         - ./srcs/requirements/wordpress
+    #     volumes:
+    #         - wordpress-db:/var/www/html
+    #     networks:
+    #         - my_network
