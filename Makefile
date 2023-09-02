@@ -26,22 +26,33 @@ down:
 
 stop-containers:
 	@echo "$(COLOR_BOLD)Stopping all containers...$(COLOR_RESET)"
-	@docker stop $(docker ps -q)
+	@docker stop $$(docker ps -qa)
 	@echo "$(COLOR_GREEN)All containers have been stopped.$(COLOR_RESET)"
 
 remove-containers:
 	@echo "$(COLOR_BOLD)Removing all stopped containers...$(COLOR_RESET)"
-	@docker rm -f $$(docker ps -aq)
+	@docker rm -f $$(docker ps -qa)
 	@echo "$(COLOR_GREEN)All stopped containers have been removed.$(COLOR_RESET)"
 
 remove-images:
 	@echo "$(COLOR_BOLD)Removing all Docker images...$(COLOR_RESET)"
-	@docker rmi $$(docker images -q)
+	@docker rmi -f $$(docker images -qa)
 	@echo "$(COLOR_GREEN)All Docker images have been removed.$(COLOR_RESET)"
 
 remove-volumes:
 	@echo "$(COLOR_BOLD)Removing all Docker volumes...$(COLOR_RESET)"
 	@docker volume rm $$(docker volume ls -q)
 	@echo "$(COLOR_GREEN)All Docker volumes have been removed.$(COLOR_RESET)"
+
+remove-network:
+	@echo "$(COLOR_BOLD)Removing all Docker Network...$(COLOR_RESET)"
+	@docker network rm $$(docker network ls -q)
+	@echo "$(COLOR_GREEN)All Docker Network have been removed.$(COLOR_RESET)"
+
+network-ls:
+	@docker network ls
+
+docker-compose:
+	@docker-compose ps
 
 .PHONY: all build up down clean stop-containers remove-containers remove-images remove-volumes
