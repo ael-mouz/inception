@@ -1,18 +1,6 @@
 version: "3"
+
 services:
-    nginx:
-        container_name: nginx
-        restart: always
-        build:
-            context: ./srcs/requirements/nginx
-        env_file:
-            - .env
-        ports:
-            - "443:443"
-        volumes:
-            - nginx_data:/etc/nginx/ssl
-        networks:
-            - my_network
     mariadb:
         container_name: mariadb
         restart: always
@@ -27,6 +15,38 @@ services:
         networks:
             - my_network
 
+    wordpress:
+        container_name: wordpress
+        restart: always
+        build:
+            context: ./srcs/requirements/wordpress
+        ports:
+            - "9000:9000"
+        volumes:
+            - wordpress_data:/var/www/html
+        env_file:
+            - .env
+        networks:
+            - my_network
+        depends_on:
+            - mariadb
+
+    nginx:
+        container_name: nginx
+        restart: always
+        build:
+            context: ./srcs/requirements/nginx
+        env_file:
+            - .env
+        ports:
+            - "443:443"
+        volumes:
+            - wordpress_data:/etc/nginx/
+        networks:
+            - my_network
+        depends_on:
+            - wordpress
+
 networks:
     my_network:
 
@@ -37,30 +57,8 @@ volumes:
             type: none
             o: bind
             device: /Users/ael-mouz/Desktop/inception/data/mariadb
-    nginx_data:
+    wordpress_data:
         driver_opts:
             type: none
             o: bind
-            device: /Users/ael-mouz/Desktop/inception/data/nginx
-    # wordpress-data:
-    #     driver: 
-    #         - local
-    #     driver_opts:
-    #         type: 
-    #             - 'none'
-    #         o: 
-    #             - 'bind'
-    #         device: 
-    #             - '~/data/wordpress'
-
-
-    #     depends_on:
-    #         - wordpress
-
-    # wordpress:
-    #     build:
-    #         - ./srcs/requirements/wordpress
-    #     volumes:
-    #         - wordpress-db:/var/www/html
-    #     networks:
-    #         - my_network
+            device: /Users/ael-mouz/Desktop/inception/data/wordpress
