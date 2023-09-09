@@ -55,4 +55,8 @@ network-ls:
 docker-compose:
 	@docker-compose ps
 
+test:
+	@docker pull debian:bullseye
+	@docker run -it debian:bullseye /bin/bash
+
 .PHONY: all build up down clean stop-containers remove-containers remove-images remove-volumes
