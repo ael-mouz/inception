@@ -41,7 +41,7 @@ services:
         ports:
             - "443:443"
         volumes:
-            - wordpress_data:/etc/nginx/
+            - wordpress_data:/var/www/html
         networks:
             - my_network
         depends_on:
@@ -56,7 +56,7 @@ volumes:
         driver_opts:
             type: none
             o: bind
-            device: /Users/ael-mouz/Desktop/inception/data/mariadb
+            device: /Users/ael-mouz/Desktop/inception/data/DB
     wordpress_data:
         driver_opts:
             type: none

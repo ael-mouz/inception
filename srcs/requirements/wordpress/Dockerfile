@@ -4,6 +4,6 @@ COPY ./tools/install-wordpress.sh ./install-wordpress.sh
 
 RUN chmod +x /install-wordpress.sh
 
-EXPOSE 80
+EXPOSE 9000
 
 CMD ["/install-wordpress.sh"]

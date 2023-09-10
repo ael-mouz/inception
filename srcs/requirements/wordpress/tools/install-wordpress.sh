@@ -1,42 +1,24 @@
 #!/bin/bash
 
-apt-get update && apt-get install -y php-fpm php-mysql php-common php-gd php-json php-curl php-zip php-xml php-mbstring php-bcmath php-json
-apt install nano wget unzip
+apt update && apt upgrade -y
+apt install -y curl
+apt install -y php7.4-fpm php7.4-mysql php7.4-curl php7.4-gd php7.4-intl php7.4-mbstring php7.4-soap php7.4-xml php7.4-json
 
-sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php/7.4/fpm/php.ini
+mkdir -p /var/run/php
+mkdir -p /var/www/html/
 
-sed -i 's~;date.timezone =.*~date.timezone = "Africa/Casablanca"~' /etc/php/7.4/fpm/php.ini
+service php7.4-fpm restart
 
-service php7.4-fpm start
+#cd /var/www/html/
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+php wp-cli.phar --info
+chmod +x wp-cli.phar
+mv wp-cli.phar /usr/local/bin/wp
 
-wget https://wordpress.org/latest.zip
-unzip latest.zip -d /var/www/html/
-cd /var/www/html/wordpress
-cp wp-config-sample.php wp-config.php
+wp cli version --allow-root
+wp cli update
+wp core download --allow-root --path=/var/www/html
+wp config create --dbname=wordpress_db --dbuser=wordpress_user --dbpass=password --dbhost=localhost --dbprefix=wp_ --allow-root --path=/var/www/html
+wp core install --url=localhost --title=Site_Title --admin_user=admin_username --admin_password=admin_password --admin_email=your@email.com --allow-root --path=/var/www/html
 
-# Define the new database settings
-new_db_name='your_new_db_name'
-new_db_user='your_new_db_user'
-new_db_password='your_new_db_password'
-new_db_host='your_new_db_host'
-
-# Define the path to your wp-config.php file
-wp_config_file='/path/to/wp-config.php'
-
-# Check if the wp-config.php file exists
-if [ ! -f "$wp_config_file" ]; then
-  echo "Error: wp-config.php file not found at $wp_config_file"
-  exit 1
-fi
-
-# Update the database settings in wp-config.php
-sed -i "s/define( 'DB_NAME', '.*' );/define( 'DB_NAME', '$new_db_name' );/" "$wp_config_file"
-sed -i "s/define( 'DB_USER', '.*' );/define( 'DB_USER', '$new_db_user' );/" "$wp_config_file"
-sed -i "s/define( 'DB_PASSWORD', '.*' );/define( 'DB_PASSWORD', '$new_db_password' );/" "$wp_config_file"
-sed -i "s/define( 'DB_HOST', '.*' );/define( 'DB_HOST', '$new_db_host' );/" "$wp_config_file"
-
-echo "Database settings updated in wp-config.php"
-
-chown -R www-data:www-data /var/www/html/wordpress/
-
-tail -f /dev/null
+chown -R www-data:www-data /var/www/html/

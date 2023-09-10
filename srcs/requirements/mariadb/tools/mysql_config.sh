@@ -25,10 +25,10 @@ while ! mysqladmin ping --silent; do
 done
 
 print_color "Creating database 'wpdb'..."
-mysql -u root -e "CREATE DATABASE wpdb;" || handle_error "Failed to create database 'wpdb'"
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS wpdb;" || handle_error "Failed to create database 'wpdb'"
 
 print_color "Creating MySQL user '${MYSQL_USER}'..."
-mysql -u root -e "CREATE USER '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" || handle_error "Failed to create MySQL user '${MYSQL_USER}'"
+mysql -u root -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" || handle_error "Failed to create MySQL user '${MYSQL_USER}'"
 
 print_color "Granting privileges to user '${MYSQL_USER}'..."
 mysql -u root -e "GRANT ALL ON wpdb.* TO '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}' WITH GRANT OPTION;" || handle_error "Failed to grant privileges to user '${MYSQL_USER}'"

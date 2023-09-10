@@ -7,9 +7,8 @@ COLOR_RESET := \033[0m
 all: build up
 
 build:
-	@mkdir -p data/mariadb
+	@mkdir -p data/DB
 	@mkdir -p data/wordpress
-	@mkdir -p data/nginx
 	@echo "$(COLOR_BOLD)Building the project...$(COLOR_RESET)"
 	@docker-compose -f srcs/docker-compose.yml build
 	@echo "$(COLOR_GREEN)Build completed successfully.$(COLOR_RESET)"
@@ -20,6 +19,8 @@ up:
 	@echo "$(COLOR_GREEN)Project is up and running.$(COLOR_RESET)"
 
 down:
+# @rm -rf data/DB
+# @rm -rf data/wordpress
 	@echo "$(COLOR_BOLD)Stopping and removing the project...$(COLOR_RESET)"
 	@docker-compose -f srcs/docker-compose.yml down
 	@echo "$(COLOR_GREEN)Project has been stopped and removed.$(COLOR_RESET)"
