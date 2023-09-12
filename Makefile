@@ -15,7 +15,7 @@ build:
 # > /dev/null 2>&1 
 up:
 	@echo "$(COLOR_BOLD)Starting the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml up -d || (echo "$(COLOR_RED)Error: Failed to start the project.$(COLOR_RESET)" && exit 1)
+	@docker-compose -f srcs/docker-compose.yml up -d --build || (echo "$(COLOR_RED)Error: Failed to start the project.$(COLOR_RESET)" && exit 1)
 	@echo "$(COLOR_GREEN)Project is up and running.$(COLOR_RESET)"
 # > /dev/null 2>&1 
 down:

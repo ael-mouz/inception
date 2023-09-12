@@ -1,6 +1,6 @@
 FROM debian:bullseye
 
-RUN apt update && apt upgrade -y && apt install -y curl php7.4-fpm php7.4-mysql php7.4-curl php7.4-gd php7.4-intl php7.4-mbstring php7.4-soap php7.4-xml php7.4-json
+RUN apt update && apt upgrade -y && apt install -y curl php7.4-fpm php7.4-mysql
 
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && \
