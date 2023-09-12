@@ -16,20 +16,11 @@ handle_error() {
     exit 1
 }
 
-print_color "Creating necessary directories..."
-mkdir -p /var/run/php || handle_error "Failed to create /var/run/php directory"
-mkdir -p /var/www/html || handle_error "Failed to create /var/www/html directory"
-
 print_color "Starting PHP-FPM service..."
 service php7.4-fpm start || handle_error "Failed to start PHP-FPM service"
 
 print_color "Configuring PHP-FPM..."
 sed -i 's/^listen = .*/listen = 0.0.0.0:9000/' /etc/php/7.4/fpm/pool.d/www.conf || handle_error "Failed to configure PHP-FPM"
-
-print_color "Downloading and installing WP-CLI..."
-curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar || handle_error "Failed to download WP-CLI"
-chmod +x wp-cli.phar
-mv wp-cli.phar /usr/local/bin/wp || handle_error "Failed to install WP-CLI"
 
 print_color "Changing to the web root directory..."
 cd /var/www/html || handle_error "Failed to change to /var/www/html directory"
@@ -45,6 +36,10 @@ wp config create --dbname="$MYSQL_DB_NAME" --dbuser="$MYSQL_USER" --dbpass="$MYS
 
 print_color "Installing WordPress..."
 wp core install --url="$WP_URL" --title="$WP_TITLE" --admin_user="$WP_ADMIN_USER" --admin_password="$WP_ADMIN_PASSWORD" --admin_email=$WP_ADMIN_EMAIL --path=/var/www/html --allow-root || handle_error "Failed to install WordPress"
+
+print_color "Create WordPress user ..."
+wp user create $WP_USER $WP_USER_EMAIL --role="$WP_USER_ROLE" --user_pass="$WP_USER_PASSWORD" --allow-root
+wp user list --allow-root
 
 print_color "Setting correct ownership..."
 chown -R www-data:www-data /var/www/html || handle_error "Failed to set correct ownership"

@@ -47,6 +47,16 @@ services:
         depends_on:
             - wordpress
 
+    adminer:
+        container_name: adminer
+        restart: always
+        build:
+            context: ./srcs/requirements/bonus/Adminer
+        ports:
+            - "8080:8080"
+        networks:
+            - my_network
+
 networks:
     my_network:
 
