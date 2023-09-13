@@ -26,20 +26,34 @@ print_color "Changing to the web root directory..."
 cd /var/www/html || handle_error "Failed to change to /var/www/html directory"
 
 print_color "Updating WP-CLI..."
-wp cli update --allow-root || handle_error "Failed to update WP-CLI"
+wp cli update --allow-root --path=/var/www/html || handle_error "Failed to update WP-CLI"
 
 print_color "Downloading WordPress core..."
 wp core download --allow-root --path=/var/www/html || handle_error "Failed to download WordPress core"
 
 print_color "Configuring WordPress database..."
-wp config create --dbname="$MYSQL_DB_NAME" --dbuser="$MYSQL_USER" --dbpass="$MYSQL_PASSWORD" --dbhost="$MYSQL_DB_HOST" --path=/var/www/html --allow-root --skip-check|| handle_error "Failed to configure WordPress database"
+wp config create --dbname="$MYSQL_DB_NAME" --dbuser="$MYSQL_USER" --dbpass="$MYSQL_PASSWORD" --dbhost=mariadb --path=/var/www/html --allow-root --skip-check|| handle_error "Failed to configure WordPress database"
 
 print_color "Installing WordPress..."
 wp core install --url="$WP_URL" --title="$WP_TITLE" --admin_user="$WP_ADMIN_USER" --admin_password="$WP_ADMIN_PASSWORD" --admin_email=$WP_ADMIN_EMAIL --path=/var/www/html --allow-root || handle_error "Failed to install WordPress"
 
 print_color "Create WordPress user ..."
-wp user create $WP_USER $WP_USER_EMAIL --role="$WP_USER_ROLE" --user_pass="$WP_USER_PASSWORD" --allow-root
-wp user list --allow-root
+wp user create $WP_USER $WP_USER_EMAIL --role="$WP_USER_ROLE" --user_pass="$WP_USER_PASSWORD" --allow-root --path=/var/www/html
+wp user list --allow-root --path=/var/www/html
+
+print_color "Configure WordPress to use Redis as the object cache ..."
+wp config set WP_REDIS_HOST redis --allow-root --path=/var/www/html
+wp config set WP_REDIS_PORT 6379 --allow-root --path=/var/www/html
+
+print_color "Install and activate the Redis Object Cache plugin ..."
+wp plugin install redis-cache --activate --allow-root --path=/var/www/html
+
+print_color "Flush the cache to ensure Redis caching starts working ..."
+wp redis enable --force --allow-root --path=/var/www/html
+wp cache flush --allow-root --path=/var/www/html
+
+print_color "Verifying Redis Object Cache configuration..."
+wp redis status --allow-root --path=/var/www/html
 
 print_color "Setting correct ownership..."
 chown -R www-data:www-data /var/www/html || handle_error "Failed to set correct ownership"
