@@ -67,4 +67,7 @@ test:
 
 fclean: down stop-containers remove-containers remove-images remove-volumes remove-network
 
+purne:
+	@docker system prune --all --force --volumes > /dev/null 2>&1 || true
+
 .PHONY: all build up down stop-containers remove-containers remove-images remove-volumes remove-network network-ls docker-compose test fclean
