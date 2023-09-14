@@ -10,18 +10,18 @@ build:
 	@mkdir -p data/DB
 	@mkdir -p data/wordpress
 	@echo "$(COLOR_BOLD)Building the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml build || (echo "$(COLOR_RED)Error: Failed to build the project.$(COLOR_RESET)" && exit 1)
+	@docker-compose -f srcs/docker-compose.yml build
 	@echo "$(COLOR_GREEN)Build completed successfully.$(COLOR_RESET)"
-# > /dev/null 2>&1 
+
 up:
 	@echo "$(COLOR_BOLD)Starting the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml up -d --build || (echo "$(COLOR_RED)Error: Failed to start the project.$(COLOR_RESET)" && exit 1)
+	@docker-compose -f srcs/docker-compose.yml up
 	@echo "$(COLOR_GREEN)Project is up and running.$(COLOR_RESET)"
-# > /dev/null 2>&1 
+
 down:
 	@rm -rf data
 	@echo "$(COLOR_BOLD)Stopping and removing the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml down > /dev/null 2>&1 || (echo "$(COLOR_RED)Error: Failed to stop and remove the project.$(COLOR_RESET)" && exit 1)
+	@docker-compose -f srcs/docker-compose.yml down > /dev/null 2>&1 || true
 	@echo "$(COLOR_GREEN)Project has been stopped and removed.$(COLOR_RESET)"
 
 stop-containers:

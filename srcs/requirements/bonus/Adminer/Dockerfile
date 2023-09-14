@@ -1,6 +1,8 @@
 FROM debian:bullseye
 
-RUN apt update && apt upgrade -y && apt install -y php php-mysql mariadb-server wget
+RUN apt update && apt upgrade -y 
+
+RUN apt install -y php php-mysql mariadb-server wget
 
 COPY ./tools/setup_adminer.sh ./setup_adminer.sh
 

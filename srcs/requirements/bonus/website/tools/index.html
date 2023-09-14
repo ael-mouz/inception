@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>GitHub-Style Markdown Editor (Dark Mode)</title>
+		<style>
+			/* Dark mode styling */
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #1e1e1e;
+				color: #cfcfcf;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			header {
+				text-align: center;
+				margin-bottom: 20px;
+			}
+			header h1 {
+				font-size: 24px;
+				margin: 0;
+			}
+			.editor-container {
+				display: flex;
+				background-color: #242424;
+				border-radius: 4px;
+				overflow: hidden;
+			}
+			.editor {
+				flex: 1;
+				padding: 10px;
+				border: none;
+				height: 400px;
+				resize: vertical;
+				background-color: #242424;
+				color: #cfcfcf;
+			}
+			.preview {
+				flex: 1;
+				padding: 10px;
+				border-left: 1px solid #333;
+				height: 400px;
+				overflow-y: auto;
+				background-color: #1e1e1e;
+			}
+			.btn-copy {
+				display: block;
+				margin-top: 20px;
+				background-color: #0366d6;
+				color: #fff;
+				padding: 10px 15px;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 16px;
+			}
+			.btn-copy:hover {
+				background-color: #0056b3;
+			}
+			.btn-copy .copy-icon {
+				margin-right: 8px;
+			}
+			footer {
+				text-align: center;
+				margin-top: 20px;
+				font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>GitHub-Style Markdown Editor</h1>
+		</header>
+		<div class="editor-container">
+			<textarea
+				id="markdown-editor"
+				class="editor"
+				placeholder="Write your Markdown here..."
+			></textarea>
+			<div class="preview" id="markdown-preview"></div>
+		</div>
+		<button class="btn-copy" id="copy-markdown">
+			<span class="copy-icon">📋</span>
+			Copy Markdown
+		</button>
+
+		<footer>&copy; Made with ❤️ by ael-mouz</footer>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+		<script>
+			const markdownEditor = document.getElementById("markdown-editor");
+			const markdownPreview = document.getElementById("markdown-preview");
+			const copyMarkdownBtn = document.getElementById("copy-markdown");
+
+			const converter = new showdown.Converter();
+
+			markdownEditor.addEventListener("input", updatePreview);
+
+			new ClipboardJS(copyMarkdownBtn, {
+				text: function () {
+					return markdownEditor.value;
+				},
+			}).on("success", function (e) {
+				e.clearSelection();
+				alert("Markdown copied to clipboard!");
+			});
+
+			function updatePreview() {
+				const markdownText = markdownEditor.value;
+				const htmlText = converter.makeHtml(markdownText);
+				markdownPreview.innerHTML = htmlText;
+			}
+
+			// Initial preview update
+			updatePreview();
+		</script>
+	</body>
+</html>

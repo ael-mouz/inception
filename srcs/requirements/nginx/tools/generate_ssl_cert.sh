@@ -22,7 +22,8 @@ openssl req -x509 -new -key ${CERTS_PATH}/private-key.key -out ${CERTS_PATH}/cer
 
 print_color "SSL certificate and private key generated successfully."
 
+while [ ! -f /var/www/html/wordpress_ready ]; do sleep 5; done
+print_color "PHP-FPM is ready."
+
 print_color "Starting Nginx..."
 nginx -g "daemon off;" || handle_error "Failed to start Nginx"
-
-print_color "${green}Nginx setup completed successfully.${normal}"
