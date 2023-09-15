@@ -70,4 +70,15 @@ fclean: down stop-containers remove-containers remove-images remove-volumes remo
 purne:
 	@docker system prune --all --force --volumes > /dev/null 2>&1 || true
 
-.PHONY: all build up down stop-containers remove-containers remove-images remove-volumes remove-network network-ls docker-compose test fclean
+ip:
+	@echo "Updating IP address in .env file..."
+	@ip_address=$$(ifconfig | grep -E "inet.*10\..*" | awk '{print $$2}'); \
+	if [ -n "$$ip_address" ]; then \
+		sed -i "" "s/DOMAIN_NAME=localhost/DOMAIN_NAME=$$ip_address/" srcs/.env; \
+		sed -i "" "s/WP_URL=localhost/WP_URL=$$ip_address/" srcs/.env; \
+		echo "Updated .env file with IP address: $$ip_address"; \
+	else \
+		echo "Failed to extract IP address."; \
+	fi
+
+.PHONY: all build up down stop-containers remove-containers remove-images remove-volumes remove-network network-ls docker-compose test fclean purne ip
