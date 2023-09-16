@@ -83,27 +83,42 @@ services:
             - "80:80"
         networks:
             - my_network
-    # portainer:
-    #     image: portainer
-    #     container_name: portainer
-    #     restart: always
-    #     build:
-    #         context: ./srcs/requirements/bonus/portainer
-    #     ports:
-    #       - "9009:9009"
+
+    portainer:
+        image: portainer
+        container_name: portainer
+        restart: always
+        build:
+            context: ./srcs/requirements/bonus/portainer
+        ports:
+          - "9009:9000"
+        volumes:
+            - portainer_data:/var/lib/portainer
+            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - my_network
 
 networks:
     my_network:
+        name: Docker network
 
 
 volumes:
     mariadb_data:
+        name: DB
         driver_opts:
             type: none
             o: bind
             device: /Users/ael-mouz/Desktop/inception/data/DB
     wordpress_data:
+        name: wordpress
         driver_opts:
             type: none
             o: bind
             device: /Users/ael-mouz/Desktop/inception/data/wordpress
+    portainer_data:
+        name: portainer
+        driver_opts:
+            type: none
+            o: bind
+            device: /Users/ael-mouz/Desktop/inception/data/portainer

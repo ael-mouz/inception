@@ -4,16 +4,14 @@ RUN apt update && apt upgrade -y
 
 RUN apt install -y curl tar
 
-RUN mkdir /portainer
+RUN mkdir -p /var/lib/portainer
 
-WORKDIR /portainer
+ARG PORTAINER_VERSION=2.19.0
 
-RUN curl -L https://github.com/portainer/portainer/releases/download/2.19.0/portainer_linux_arm64.tar.gz -o portainer.tar.gz
+ARG PORTAINER_URL=https://github.com/portainer/portainer/releases/download/${PORTAINER_VERSION}/portainer-${PORTAINER_VERSION}-linux-amd64.tar.gz
 
-RUN tar -xzf portainer.tar.gz
+RUN curl -sSL ${PORTAINER_URL} | tar -xzo -C /usr/local
 
-RUN rm portainer.tar.gz
+EXPOSE 9000
 
-EXPOSE 9009
-
-CMD ["./portainer"]
+CMD ["/usr/local/portainer/portainer", "--data", "/var/lib/portainer/data"]

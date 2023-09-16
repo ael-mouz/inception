@@ -1,1 +1,1 @@
-FROM baseImage
+FROM debian:bullseye

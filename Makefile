@@ -9,13 +9,14 @@ all: build up
 build:
 	@mkdir -p data/DB
 	@mkdir -p data/wordpress
+	@mkdir -p data/portainer
 	@echo "$(COLOR_BOLD)Building the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml build
+	@docker-compose -f srcs/docker-compose.yml --project-name inception build
 	@echo "$(COLOR_GREEN)Build completed successfully.$(COLOR_RESET)"
 
 up:
 	@echo "$(COLOR_BOLD)Starting the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml up
+	@docker-compose -f srcs/docker-compose.yml --project-name inception up
 	@echo "$(COLOR_GREEN)Project is up and running.$(COLOR_RESET)"
 
 down:
