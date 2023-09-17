@@ -7,8 +7,6 @@ services:
         restart: always
         build:
             context: ./srcs/requirements/mariadb
-        # ports:
-        #     - "3306:3306"
         volumes:
             - mariadb_data:/var/lib/mysql
         env_file:
@@ -22,8 +20,6 @@ services:
         restart: always
         build:
             context: ./srcs/requirements/wordpress
-        # ports:
-        #     - "9000:9000"
         volumes:
             - wordpress_data:/var/www/html
         env_file:
@@ -68,8 +64,6 @@ services:
         restart: always
         build:
             context: ./srcs/requirements/bonus/redis
-        ports:
-            - "6379:6379"
         networks:
             - my_network
 
@@ -81,6 +75,8 @@ services:
             context: ./srcs/requirements/bonus/website
         ports:
             - "80:80"
+        env_file:
+            - .env
         networks:
             - my_network
 
@@ -93,8 +89,24 @@ services:
         ports:
           - "9009:9000"
         volumes:
-            - portainer_data:/var/lib/portainer
             - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - my_network
+
+    ftp:
+        image: ftp
+        container_name: ftp
+        restart: always
+        build:
+            context: ./srcs/requirements/bonus/ftp
+        ports:
+            - "21:21"
+            - "20:20"
+            - "40000-40005:40000-40005"
+        volumes:
+            - wordpress_data:/var/www/html
+        env_file:
+            - .env
         networks:
             - my_network
 
@@ -116,9 +128,3 @@ volumes:
             type: none
             o: bind
             device: /Users/ael-mouz/Desktop/inception/data/wordpress
-    portainer_data:
-        name: portainer
-        driver_opts:
-            type: none
-            o: bind
-            device: /Users/ael-mouz/Desktop/inception/data/portainer

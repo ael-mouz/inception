@@ -9,7 +9,6 @@ all: build up
 build:
 	@mkdir -p data/DB
 	@mkdir -p data/wordpress
-	@mkdir -p data/portainer
 	@echo "$(COLOR_BOLD)Building the project...$(COLOR_RESET)"
 	@docker-compose -f srcs/docker-compose.yml --project-name inception build
 	@echo "$(COLOR_GREEN)Build completed successfully.$(COLOR_RESET)"
@@ -63,7 +62,7 @@ docker-compose:
 test:
 	@echo "$(COLOR_BOLD)Pulling and running a test container...$(COLOR_RESET)"
 	@docker pull debian:bullseye > /dev/null 2>&1 || (echo "$(COLOR_RED)Error: Failed to pull the test container image.$(COLOR_RESET)" && exit 1)
-	@docker run -it debian:bullseye /bin/bash
+	@docker run --privileged -it debian:bullseye /bin/bash
 	@echo "$(COLOR_GREEN)Test container executed.$(COLOR_RESET)"
 
 fclean: down stop-containers remove-containers remove-images remove-volumes remove-network
@@ -73,10 +72,10 @@ purne:
 
 ip:
 	@echo "Updating IP address in .env file..."
-	@ip_address=$$(ifconfig | grep -E "inet.*10\..*" | awk '{print $$2}'); \
+	@ip_address=$$(ifconfig | grep inet | awk 'NR == 5 {print $$2}' ); \
 	if [ -n "$$ip_address" ]; then \
-		sed -i "" "s/DOMAIN_NAME=localhost/DOMAIN_NAME=$$ip_address/" srcs/.env; \
-		sed -i "" "s/WP_URL=localhost/WP_URL=$$ip_address/" srcs/.env; \
+		sed -i "" "s#DOMAIN_NAME=.*#DOMAIN_NAME=$$ip_address#" srcs/.env; \
+		sed -i "" "s#WP_URL=.*#WP_URL=$$ip_address#" srcs/.env; \
 		echo "Updated .env file with IP address: $$ip_address"; \
 	else \
 		echo "Failed to extract IP address."; \

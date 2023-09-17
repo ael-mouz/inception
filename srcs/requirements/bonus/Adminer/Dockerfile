@@ -10,4 +10,4 @@ RUN chmod +x ./setup_adminer.sh
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/setup_adminer.sh" ]
+ENTRYPOINT [ "./setup_adminer.sh" ]
