@@ -5,13 +5,15 @@ RUN apt update && apt upgrade -y
 RUN apt install -y nginx
 
 COPY ./site/index.html /var/www/html/
+
 COPY ./site/style.css /var/www/html/
+
 COPY ./site/assets/* /var/www/html/assets/
 
-COPY ./tools/change_host.sh ./change_host.sh
+COPY ./tools/setup_website.sh ./setup_website.sh
 
-RUN chmod +x ./change_host.sh
+RUN chmod +x ./setup_website.sh
 
 EXPOSE 80
 
-ENTRYPOINT [ "./change_host.sh" ]
+ENTRYPOINT [ "./setup_website.sh" ]

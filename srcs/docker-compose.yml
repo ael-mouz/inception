@@ -55,6 +55,8 @@ services:
             context: ./srcs/requirements/bonus/adminer
         ports:
             - "8080:8080"
+        volumes:
+          - adminer_data:/var/www/html
         networks:
             - my_network
 
@@ -77,6 +79,8 @@ services:
             - "80:80"
         env_file:
             - .env
+        volumes:
+          - website_data:/var/www/html
         networks:
             - my_network
 
@@ -87,7 +91,9 @@ services:
         build:
             context: ./srcs/requirements/bonus/portainer
         ports:
-          - "9009:9000"
+          - "9009:9009"
+        env_file:
+            - .env
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
         networks:
@@ -109,6 +115,8 @@ services:
             - .env
         networks:
             - my_network
+        depends_on:
+            - wordpress
 
 networks:
     my_network:
@@ -128,3 +136,15 @@ volumes:
             type: none
             o: bind
             device: /Users/ael-mouz/Desktop/inception/data/wordpress
+    adminer_data:
+        name: adminer
+        driver_opts:
+            type: none
+            o: bind
+            device: /Users/ael-mouz/Desktop/inception/data/adminer
+    website_data:
+        name: website
+        driver_opts:
+            type: none
+            o: bind
+            device: /Users/ael-mouz/Desktop/inception/data/website

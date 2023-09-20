@@ -9,6 +9,8 @@ all: build up
 build:
 	@mkdir -p data/DB
 	@mkdir -p data/wordpress
+	@mkdir -p data/adminer
+	@mkdir -p data/website
 	@echo "$(COLOR_BOLD)Building the project...$(COLOR_RESET)"
 	@docker-compose -f srcs/docker-compose.yml --project-name inception build
 	@echo "$(COLOR_GREEN)Build completed successfully.$(COLOR_RESET)"
@@ -69,7 +71,11 @@ fclean: down stop-containers remove-containers remove-images remove-volumes remo
 
 purne:
 	@docker system prune --all --force --volumes > /dev/null 2>&1 || true
-
+p:
+	docker container prune --force > /dev/null 2>&1 || true
+	docker image prune --force --all > /dev/null 2>&1 || true
+	docker volume prune --force --all > /dev/null 2>&1 || true
+	docker network prune --force > /dev/null 2>&1 || true
 ip:
 	@echo "Updating IP address in .env file..."
 	@ip_address=$$(ifconfig | grep inet | awk 'NR == 5 {print $$2}' ); \

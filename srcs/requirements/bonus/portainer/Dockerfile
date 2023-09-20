@@ -2,16 +2,12 @@ FROM debian:bullseye
 
 RUN apt update && apt upgrade -y
 
-RUN apt install -y curl tar
+RUN apt install -y curl tar apache2-utils
 
-RUN mkdir -p /var/lib/portainer
+COPY ./tools/setup_portainer.sh ./setup_portainer.sh
 
-ARG PORTAINER_VERSION=2.19.0
+RUN chmod +x ./setup_portainer.sh
 
-ARG PORTAINER_URL=https://github.com/portainer/portainer/releases/download/${PORTAINER_VERSION}/portainer-${PORTAINER_VERSION}-linux-amd64.tar.gz
+EXPOSE 9009
 
-RUN curl -sSL ${PORTAINER_URL} | tar -xzo -C /usr/local
-
-EXPOSE 9000
-
-CMD ["/usr/local/portainer/portainer", "--data", "/var/lib/portainer/data"]
+ENTRYPOINT [ "./setup_portainer.sh" ]

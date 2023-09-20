@@ -23,9 +23,9 @@ print_default "Changing to the web root directory..."
 cd /var/www/html || handle_error "Failed to change to /var/www/html directory"
 print_color "Changed to the web root directory."
 
-print_default "Updating WP-CLI..."
-wp cli update --allow-root || handle_error "Failed to update WP-CLI"
-print_color "Updated WP-CLI."
+# print_default "Updating WP-CLI..."
+# wp cli update --allow-root || handle_error "Failed to update WP-CLI"
+# print_color "Updated WP-CLI."
 
 print_default "Downloading WordPress core..."
 wp core download --allow-root || handle_error "Failed to download WordPress core"

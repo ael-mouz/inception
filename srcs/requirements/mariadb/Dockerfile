@@ -6,10 +6,10 @@ RUN apt install -y mariadb-server
 
 COPY ./conf/50-server.conf /etc/mysql/mariadb.conf.d/50-server.cnf
 
-COPY ./tools/mysql_config.sh ./mysql_config.sh
+COPY ./tools/setup_mariadb.sh ./setup_mariadb.sh
 
-RUN chmod +x ./mysql_config.sh
+RUN chmod +x ./setup_mariadb.sh
 
 EXPOSE 3306
 
-ENTRYPOINT [ "./mysql_config.sh" ]
+ENTRYPOINT [ "./setup_mariadb.sh" ]

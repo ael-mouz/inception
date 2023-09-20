@@ -6,10 +6,10 @@ RUN apt install -y nginx openssl
 
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
-COPY ./tools/generate_ssl_cert.sh ./generate_ssl_cert.sh
+COPY ./tools/setup_nginx.sh ./setup_nginx.sh
 
-RUN chmod +x ./generate_ssl_cert.sh
+RUN chmod +x ./setup_nginx.sh
 
 EXPOSE 443
 
-ENTRYPOINT [ "./generate_ssl_cert.sh" ]
+ENTRYPOINT [ "./setup_nginx.sh" ]
