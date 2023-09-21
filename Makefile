@@ -4,26 +4,38 @@ COLOR_GREEN := \033[1;32m
 COLOR_YELLOW := \033[1;33m
 COLOR_RESET := \033[0m
 
+IP := $(shell ifconfig | grep inet | awk 'NR == 5 {print $$2}')
+
+HEADER ="                                                                     \n"\
+		"██╗███╗   ██╗ ██████╗███████╗██████╗ ████████╗██╗ ██████╗ ███╗   ██╗\n"\
+		"██║████╗  ██║██╔════╝██╔════╝██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║\n"\
+		"██║██╔██╗ ██║██║     █████╗  ██████╔╝   ██║   ██║██║   ██║██╔██╗ ██║\n"\
+		"██║██║╚██╗██║██║     ██╔══╝  ██╔═══╝    ██║   ██║██║   ██║██║╚██╗██║\n"\
+		"██║██║ ╚████║╚██████╗███████╗██║        ██║   ██║╚██████╔╝██║ ╚████║\n"\
+		"╚═╝╚═╝  ╚═══╝ ╚═════╝╚══════╝╚═╝        ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝\n"\
+
 all: build up
 
-build:
+build: ip
 	@mkdir -p data/DB
 	@mkdir -p data/wordpress
 	@mkdir -p data/adminer
 	@mkdir -p data/website
+	@clear
 	@echo "$(COLOR_BOLD)Building the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml --project-name inception build
+	@docker-compose -f srcs/docker-compose.yml --project-name inception build --progress=plain > docker-build.log 2>&1 || true
 	@echo "$(COLOR_GREEN)Build completed successfully.$(COLOR_RESET)"
 
 up:
 	@echo "$(COLOR_BOLD)Starting the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml --project-name inception up
-	@echo "$(COLOR_GREEN)Project is up and running.$(COLOR_RESET)"
+	@docker-compose -f srcs/docker-compose.yml --project-name inception up -d > /dev/null 2>&1 || true
+	@clear
+	@echo ${HEADER}
+	@echo "$(COLOR_GREEN)Project is up and running ${COLOR_YELLOW}http://${IP}$(COLOR_RESET)"
 
-down:
-	@rm -rf data
+down: stop-containers remove-containers
 	@echo "$(COLOR_BOLD)Stopping and removing the project...$(COLOR_RESET)"
-	@docker-compose -f srcs/docker-compose.yml down > /dev/null 2>&1 || true
+	@docker-compose -f srcs/docker-compose.yml down --remove-orphans > /dev/null 2>&1 || true
 	@echo "$(COLOR_GREEN)Project has been stopped and removed.$(COLOR_RESET)"
 
 stop-containers:
@@ -56,33 +68,23 @@ network-ls:
 	@docker network ls
 	@echo "$(COLOR_GREEN)Docker networks listed.$(COLOR_RESET)"
 
-docker-compose:
-	@echo "$(COLOR_BOLD)Displaying Docker Compose services...$(COLOR_RESET)"
-	@docker-compose ps
-	@echo "$(COLOR_GREEN)Docker Compose services displayed.$(COLOR_RESET)"
+clean:
+	@rm -rf data
+	@rm -rf docker-build.log
 
-test:
-	@echo "$(COLOR_BOLD)Pulling and running a test container...$(COLOR_RESET)"
-	@docker pull debian:bullseye > /dev/null 2>&1 || (echo "$(COLOR_RED)Error: Failed to pull the test container image.$(COLOR_RESET)" && exit 1)
-	@docker run --privileged -it debian:bullseye /bin/bash
-	@echo "$(COLOR_GREEN)Test container executed.$(COLOR_RESET)"
+fclean: down remove-images remove-volumes remove-network clean
 
-fclean: down stop-containers remove-containers remove-images remove-volumes remove-network
+re: fclean all
 
 purne:
 	@docker system prune --all --force --volumes > /dev/null 2>&1 || true
-p:
-	docker container prune --force > /dev/null 2>&1 || true
-	docker image prune --force --all > /dev/null 2>&1 || true
-	docker volume prune --force --all > /dev/null 2>&1 || true
-	docker network prune --force > /dev/null 2>&1 || true
+
 ip:
 	@echo "Updating IP address in .env file..."
-	@ip_address=$$(ifconfig | grep inet | awk 'NR == 5 {print $$2}' ); \
-	if [ -n "$$ip_address" ]; then \
-		sed -i "" "s#DOMAIN_NAME=.*#DOMAIN_NAME=$$ip_address#" srcs/.env; \
-		sed -i "" "s#WP_URL=.*#WP_URL=$$ip_address#" srcs/.env; \
-		echo "Updated .env file with IP address: $$ip_address"; \
+	@if [ -n "$(IP)" ]; then \
+		sed -i "" "s#DOMAIN_NAME=.*#DOMAIN_NAME=$(IP)#" srcs/.env; \
+		sed -i "" "s#WP_URL=.*#WP_URL=$(IP)#" srcs/.env; \
+		echo "Updated .env file with IP address: $(IP)"; \
 	else \
 		echo "Failed to extract IP address."; \
 	fi

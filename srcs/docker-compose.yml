@@ -120,8 +120,7 @@ services:
 
 networks:
     my_network:
-        name: Docker network
-
+        name: inception
 
 volumes:
     mariadb_data:

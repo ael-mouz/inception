@@ -14,39 +14,47 @@ print_default() {
 print_color() {
     echo "${bold}${green}${1}${normal}"
 }
-handle_error() {
-    echo "${bold}${red}Error: $1${normal}"
-    exit 1
-}
 
 print_default "Starting MariaDB in the background..."
 mysqld_safe &
 while ! mysqladmin ping --silent; do sleep 1 ; done
 print_color "MariaDB started successfully."
 
+print_default "Setting up MySQL root user..."
+mysql_secure_installation <<EOF >/dev/null 2>&1
+n
+${MYSQL_ROOT_PASSWORD}
+${MYSQL_ROOT_PASSWORD}
+y
+n
+n
+n
+n
+EOF
+print_color "MySQL root user set up successfully."
+
 print_default "Creating database '${MYSQL_DB_NAME}'..."
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DB_NAME};" || handle_error "Failed to create database '${MYSQL_DB_NAME}'"
+mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DB_NAME};"
 print_color "Database '${MYSQL_DB_NAME}' created successfully."
 
 print_default "Creating MySQL user ${MYSQL_USER}..."
-mysql -u root -e "CREATE USER IF NOT EXISTS ${MYSQL_USER}@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';" || handle_error "Failed to create MySQL user ${MYSQL_USER}"
+mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "CREATE USER IF NOT EXISTS ${MYSQL_USER}@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 print_color "MySQL user '${MYSQL_USER}' created successfully."
 
 print_default "Granting privileges to user ${MYSQL_USER}..."
-mysql -u root -e "GRANT ALL ON ${MYSQL_DB_NAME}.* TO ${MYSQL_USER}@'%' IDENTIFIED BY '${MYSQL_PASSWORD}' WITH GRANT OPTION;" || handle_error "Failed to grant privileges to user ${MYSQL_USER}"
+mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON ${MYSQL_DB_NAME}.* TO ${MYSQL_USER}@'%' IDENTIFIED BY '${MYSQL_PASSWORD}' WITH GRANT OPTION;"
 print_color "Privileges granted to user '${MYSQL_USER}'."
 
 print_default "Creating and granting privileges to 'root' user..."
-mysql -u root -e "CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';" || handle_error "Failed to create 'root' user"
-mysql -u root -e "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' WITH GRANT OPTION;" || handle_error "Failed to grant privileges to 'root' user"
+mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' WITH GRANT OPTION;"
 print_color "Privileges granted to 'root' user."
 
 print_default "Flushing privileges..."
-mysql -u root -e "FLUSH PRIVILEGES;" || handle_error "Failed to flush privileges"
+mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
 print_color "Privileges flushed successfully."
 
 print_default "Shutdown MariaDB gracefully ..."
-mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown || handle_error "Failed to shut down MariaDB"
+mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown
 print_color "MariaDB shutdown."
 
 print_default "${magenta}Starting MariaDB in the background...${normal}"

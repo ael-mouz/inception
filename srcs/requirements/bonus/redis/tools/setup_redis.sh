@@ -14,10 +14,6 @@ print_default() {
 print_color() {
     echo "${bold}${green}${1}${normal}"
 }
-handle_error() {
-    echo "${bold}${red}Error: $1${normal}"
-    exit 1
-}
 
 print_default "${magenta}Starting the Redis server...${normal}"
-redis-server --bind 0.0.0.0 --protected-mode no || handle_error "Failed to start the Redis server"
+redis-server --bind 0.0.0.0 --port 6379 --protected-mode no

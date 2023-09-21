@@ -20,4 +20,4 @@ RUN chmod +x ./setup_wordpress.sh
 
 EXPOSE 9000
 
-CMD ["./setup_wordpress.sh"]
+ENTRYPOINT ["./setup_wordpress.sh"]
