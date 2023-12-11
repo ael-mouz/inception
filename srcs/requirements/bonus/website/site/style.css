@@ -1,34 +1,15 @@
-/* styles.css */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #3f4343;
+    background-image: url("./assets/site42-bg.png");
+    background-size: cover;
+    background-position: center;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
+	align-items: center;
     min-height: 100vh;
-}
-
-header {
-    background-color: #d8ddf3;
-    color: #010101;
-    padding: 10px 0;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline;
-    margin-right: 20px;
-}
-
-nav a {
-    text-decoration: none;
-    color: #090909;
 }
 
 main {
@@ -36,43 +17,42 @@ main {
     padding: 20px;
 }
 
+h1 {
+	color: #000000;
+}
+
 #hero {
-    background-color: #aeacd9;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 #profile-photo {
     max-width: 300px;
-    border-radius: 50%;
-}
-
-h1 {
-    color: #000000;
+    max-height: 300px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
 }
 
 .button {
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.13);
     display: inline-block;
+    max-width: 300px;
     padding: 10px 20px;
     margin: 10px;
-    background-color: #d8ddf3;
+    background-color: #c4c4c4;
     color: #000000;
     text-decoration: none;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #a0a0a0;
 }
 
 .button img {
     max-width: 40px;
     margin-bottom: 5px;
-}
-
-footer {
-    background-color: #d8ddf3;
-    color: #040404;
-    padding: 10px 0;
-    text-align: center;
 }

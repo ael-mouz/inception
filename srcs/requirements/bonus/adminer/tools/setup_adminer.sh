@@ -21,9 +21,8 @@ print_color "Adminer downloaded successfully."
 
 print_default "Download theme CSS file for Adminer..."
 curl -sSL "https://raw.githubusercontent.com/Niyko/Hydra-Dark-Theme-for-Adminer/master/adminer.css" -o /var/www/html/adminer.css
-print_color "Theme CSS file downloaded successfully."
-
 # curl -sSL "https://raw.githubusercontent.com/pepa-linha/Adminer-Design-Dark/master/adminer.css" -o /var/www/html/adminer.css
+print_color "Theme CSS file downloaded successfully."
 
 print_default "${magenta}Start the PHP built-in web server ...${normal}"
 php -S 0.0.0.0:8080 -t /var/www/html

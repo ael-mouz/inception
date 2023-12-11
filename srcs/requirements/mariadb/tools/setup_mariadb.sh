@@ -15,13 +15,13 @@ print_color() {
     echo "${bold}${green}${1}${normal}"
 }
 
-print_default "Starting MariaDB in the background..."
+print_default "Starting MariaDB..."
 mysqld_safe &
 while ! mysqladmin ping --silent; do sleep 1 ; done
 print_color "MariaDB started successfully."
 
 print_default "Setting up MySQL root user..."
-mysql_secure_installation <<EOF >/dev/null 2>&1
+mysql_secure_installation << EOF > /dev/null 2>&1
 n
 ${MYSQL_ROOT_PASSWORD}
 ${MYSQL_ROOT_PASSWORD}
@@ -57,5 +57,5 @@ print_default "Shutdown MariaDB gracefully ..."
 mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown
 print_color "MariaDB shutdown."
 
-print_default "${magenta}Starting MariaDB in the background...${normal}"
+print_default "${magenta}Starting MariaDB...${normal}"
 mysqld_safe

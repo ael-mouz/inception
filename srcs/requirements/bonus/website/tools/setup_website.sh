@@ -18,5 +18,5 @@ print_default "Replace 'localhost' with the value of '$DOMAIN_NAME' in the index
 sed -i "s/localhost/$DOMAIN_NAME/g" /var/www/html/index.html
 print_color "Replaced 'localhost' with '$DOMAIN_NAME' in index.html."
 
-print_default "${magenta}Start the Nginx server in daemon mode ...${normal}"
-nginx -g "daemon off;"
+print_default "${magenta}Start the PHP built-in web server ...${normal}"
+php -S 0.0.0.0:8000 -t /var/www/html

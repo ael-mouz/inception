@@ -2,7 +2,7 @@ FROM debian:bullseye
 
 RUN apt update && apt upgrade -y
 
-RUN apt install -y nginx
+RUN apt install -y php
 
 COPY ./site/index.html /var/www/html/
 
@@ -14,6 +14,6 @@ COPY ./tools/setup_website.sh ./setup_website.sh
 
 RUN chmod +x ./setup_website.sh
 
-EXPOSE 80
+EXPOSE 8000
 
 ENTRYPOINT [ "./setup_website.sh" ]
