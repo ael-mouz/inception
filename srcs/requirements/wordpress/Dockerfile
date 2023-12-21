@@ -1,12 +1,12 @@
 FROM debian:bullseye
 
-RUN apt update && apt upgrade -y 
+RUN apt update && apt upgrade -y
 
-RUN apt install -y curl php7.4-fpm php7.4-mysql
+RUN apt install -y curl php7.4-fpm php7.4-mysql default-mysql-client
 
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar 
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 
-RUN chmod +x wp-cli.phar 
+RUN chmod +x wp-cli.phar
 
 RUN mv wp-cli.phar /usr/local/bin/wp
 

@@ -8,12 +8,17 @@ green=$(tput setaf 2)
 blue=$(tput setaf 4)
 magenta=$(tput setaf 5)
 
+
 print_default() {
     echo "${bold}${blue}${1}${normal}"
 }
 print_color() {
     echo "${bold}${green}${1}${normal}"
 }
+
+print_default "Setting permission ..."
+chmod 777 /var/www/html/*
+print_default "Set permission ."
 
 print_default "Creating directory for FTP certificates..."
 mkdir -p "${FTP_CERTS_PATH}"

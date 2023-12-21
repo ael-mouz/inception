@@ -5,6 +5,7 @@ bold=$(tput bold)
 normal=$(tput sgr0)
 red=$(tput setaf 1)
 green=$(tput setaf 2)
+yellow=$(tput setaf 3)
 blue=$(tput setaf 4)
 magenta=$(tput setaf 5)
 
@@ -14,14 +15,6 @@ print_default() {
 print_color() {
     echo "${bold}${green}${1}${normal}"
 }
-
-print_default "Downloading Portainer..."
-curl -sSL https://github.com/portainer/portainer/releases/download/2.19.0/portainer-2.19.0-linux-amd64.tar.gz -o /tmp/portainer.tar.gz
-print_color "Downloaded Portainer successfully."
-
-print_default "Extracting Portainer..."
-tar -xzf /tmp/portainer.tar.gz -C /var/lib/
-print_color "Extracted Portainer successfully."
 
 print_default "Generating ADMIN_PASSWORD_HASH..."
 ADMIN_PASSWORD_HASH=$(htpasswd -nbB admin "${PORTAINER_ADMIN_PASSWORD}" | cut -d ":" -f 2)
