@@ -16,21 +16,19 @@ print_color() {
     echo "${bold}${green}${1}${normal}"
 }
 
-print_default "Setting permission ..."
-chmod 777 /var/www/html/*
-print_default "Set permission ."
-
 print_default "Creating directory for FTP certificates..."
 mkdir -p "${FTP_CERTS_PATH}"
 print_color "Directory for FTP certificates created successfully."
 
-print_default "Generating SSL certificate and key..."
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "${FTP_CERTS_PATH}vsftpd.key" -out "${FTP_CERTS_PATH}vsftpd.crt" -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=Common Name" 2>/dev/null
-print_color "SSL certificate and key generated successfully."
+print_default "Generate SSL private key..."
+openssl genpkey -algorithm RSA -out "${FTP_CERTS_PATH}vsftpd.key" 2>/dev/null
+print_color "SSL private key generated successfully."
 
-print_default "Setting permissions for SSL certificate and key..."
-chmod 600 "${FTP_CERTS_PATH}vsftpd.key" "${FTP_CERTS_PATH}vsftpd.crt"
-print_color "Permissions for SSL certificate and key set successfully."
+print_default "Generate SSL certificate..."
+openssl req -x509 -new -key "${FTP_CERTS_PATH}vsftpd.key" \
+  -out "${FTP_CERTS_PATH}vsftpd.crt" \
+  -days 365 -subj "/C=MA/ST=State/L=City/O=Organization/OU=Department/CN=localhost" 2>/dev/null
+print_color "SSL certificate generated successfully."
 
 print_default "Creating FTP user..."
 if id "$FTP_USER" &>/dev/null; then
@@ -45,13 +43,18 @@ echo "${FTP_USER}:${FTP_PASSWORD}" | chpasswd
 print_color "FTP user password set successfully."
 
 print_default "Adding FTP user to the vsftpd userlist..."
-echo "${FTP_USER}" | tee -a /etc/vsftpd.userlist
+# echo "${FTP_USER}" | tee -a /etc/vsftpd.userlist
+echo "${FTP_USER}" >> /etc/vsftpd.userlist
 print_color "FTP user added to vsftpd userlist successfully."
 
 print_default "Configuring vsftpd to use SSL certificate and key..."
 sed -i "s|rsa_cert_file=.*|rsa_cert_file=${FTP_CERTS_PATH}vsftpd.crt|" /etc/vsftpd.conf
 sed -i "s|rsa_private_key_file=.*|rsa_private_key_file=${FTP_CERTS_PATH}vsftpd.key|" /etc/vsftpd.conf
 print_color "vsftpd configured to use SSL certificate and key successfully."
+
+print_default "Setting permission ..."
+chmod -R 777 /var/www/html
+print_color "Set permission ."
 
 print_default "${magenta}Starting vsftpd...${normal}"
 vsftpd /etc/vsftpd.conf

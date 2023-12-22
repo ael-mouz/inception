@@ -7,7 +7,7 @@ COLOR_GREEN := \033[32m
 
 up:
 	@reset
-	@mkdir -p /home/ael-mouz/data/DB /home/ael-mouz/data/wordpress /home/ael-mouz/data/adminer /home/ael-mouz/data/website
+	@mkdir -p /home/ael-mouz/data/DB /home/ael-mouz/data/root
 	@echo "$(COLOR_BOLD)Starting the project...$(COLOR_RESET)"
 	@-docker-compose -f srcs/docker-compose.yml --project-name inception up --build
 
@@ -69,7 +69,7 @@ volume-inspect:
 clean: stop-containers remove-containers remove-images remove-volumes remove-network
 
 fclean: clean
-	@-rm -rf /home/ael-mouz/data
+	@-sudo rm -rf /home/ael-mouz/data
 
 re: fclean up
 

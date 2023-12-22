@@ -1,151 +1,143 @@
 version: "3"
 
 services:
-    mariadb:
-        image : mariadb
-        container_name: mariadb
-        restart: always
-        build:
-            context: ./requirements/mariadb
-        volumes:
-            - mariadb_data:/var/lib/mysql
-        env_file:
-            - .env
-        networks:
-            - my_network
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: always
+    env_file: .env
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - inception
 
-    wordpress:
-        image : wordpress
-        container_name: wordpress
-        restart: always
-        build:
-            context: ./requirements/wordpress
-        volumes:
-            - wordpress_data:/var/www/html
-        env_file:
-            - .env
-        networks:
-            - my_network
-        depends_on:
-            - mariadb
-            - redis
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    restart: always
+    env_file: .env
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    volumes:
+      - html_data:/var/www/html
+    networks:
+      - inception
+    depends_on:
+      - mariadb
+      - redis
 
-    nginx:
-        image : nginx
-        container_name: nginx
-        restart: always
-        build:
-            context: ./requirements/nginx
-        ports:
-            - "443:443"
-        volumes:
-            - wordpress_data:/var/www/html
-        env_file:
-            - .env
-        networks:
-            - my_network
-        depends_on:
-            - wordpress
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: always
+    env_file: .env
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+    volumes:
+      - html_data:/var/www/html
+    networks:
+      - inception
+    depends_on:
+      - wordpress
 
-    adminer:
-        image : adminer
-        container_name: adminer
-        restart: always
-        build:
-            context: ./requirements/bonus/adminer
-        ports:
-            - "8080:8080"
-        volumes:
-          - adminer_data:/var/www/html
-        networks:
-            - my_network
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    build:
+      context: ./requirements/bonus/adminer
+      dockerfile: Dockerfile
+    volumes:
+      - html_data:/var/www/html
+    networks:
+      - inception
 
-    redis:
-        image : redis
-        privileged: true
-        container_name: redis
-        restart: always
-        build:
-            context: ./requirements/bonus/redis
-        networks:
-            - my_network
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    build:
+      context: ./requirements/bonus/redis
+      dockerfile: Dockerfile
+    volumes:
+      - html_data:/var/www/html
+    networks:
+      - inception
 
-    website:
-        image : website
-        container_name: website
-        restart: always
-        build:
-            context: ./requirements/bonus/website
-        ports:
-            - "8000:8000"
-        env_file:
-            - .env
-        volumes:
-          - website_data:/var/www/html
-        networks:
-            - my_network
+  website:
+    image: website
+    container_name: website
+    restart: always
+    env_file: .env
+    build:
+      context: ./requirements/bonus/website
+      dockerfile: Dockerfile
+    volumes:
+      - html_data:/var/www/html
+    networks:
+      - inception
 
-    portainer:
-        image: portainer
-        container_name: portainer
-        restart: always
-        build:
-            context: ./requirements/bonus/portainer
-        ports:
-          - "9009:9009"
-        env_file:
-            - .env
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-        networks:
-            - my_network
+  portainer:
+    image: portainer
+    container_name: portainer
+    restart: always
+    env_file: .env
+    build:
+      context: ./requirements/bonus/portainer
+      dockerfile: Dockerfile
+    ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - bonus
 
-    ftp:
-        image: ftp
-        container_name: ftp
-        restart: always
-        build:
-            context: ./requirements/bonus/ftp
-        ports:
-            - "21:21"
-            - "20:20"
-            - "40000-40005:40000-40005"
-        volumes:
-            - wordpress_data:/var/www/html
-        env_file:
-            - .env
-        networks:
-            - my_network
-        depends_on:
-            - wordpress
+  ftp:
+    image: ftp
+    container_name: ftp
+    restart: always
+    env_file: .env
+    build:
+      context: ./requirements/bonus/ftp
+      dockerfile: Dockerfile
+    ports:
+      - "21:21"
+      - "20:20"
+      - "40000-40005:40000-40005"
+    volumes:
+      - html_data:/var/www/html
+    networks:
+      - bonus
+    depends_on:
+      - wordpress
 
 networks:
-    my_network:
-        driver: bridge
-        name: inception
+  inception:
+    driver: bridge
+    name: inception
+  bonus:
+    driver: bridge
+    name: bonus
 
 volumes:
-    mariadb_data:
-        name: DB
-        driver_opts:
-            type: none
-            o: bind
-            device: /home/ael-mouz/data/DB
-    wordpress_data:
-        name: wordpress
-        driver_opts:
-            type: none
-            o: bind
-            device: /home/ael-mouz/data/wordpress
-    adminer_data:
-        name: adminer
-        driver_opts:
-            type: none
-            o: bind
-            device: /home/ael-mouz/data/adminer
-    website_data:
-        name: website
-        driver_opts:
-            type: none
-            o: bind
-            device: /home/ael-mouz/data/website
+  mariadb_data:
+    name: DB
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ael-mouz/data/DB
+  html_data:
+    name: wordpress
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ael-mouz/data/root

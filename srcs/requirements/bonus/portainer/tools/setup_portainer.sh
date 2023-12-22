@@ -21,4 +21,4 @@ ADMIN_PASSWORD_HASH=$(htpasswd -nbB admin "${PORTAINER_ADMIN_PASSWORD}" | cut -d
 print_color "ADMIN_PASSWORD_HASH generated successfully."
 
 print_default "${magenta}Starting Portainer...${normal}"
-/var/lib/portainer/portainer --bind 0.0.0.0:9009 --admin-password ${ADMIN_PASSWORD_HASH}
+/var/lib/portainer/portainer --bind-https 0.0.0.0:9443 --admin-password ${ADMIN_PASSWORD_HASH}

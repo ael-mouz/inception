@@ -15,8 +15,12 @@ print_color() {
 }
 
 print_default "Replace 'localhost' with the value of '$DOMAIN_NAME' in the index.html file..."
-sed -i "s/localhost/$DOMAIN_NAME/g" /var/www/html/index.html
+sed -i "s/localhost/$DOMAIN_NAME/g" /var/www/html/website/index.html
 print_color "Replaced 'localhost' with '$DOMAIN_NAME' in index.html."
+
+print_default "Setting permission ..."
+chmod -R 777 /var/www/html
+print_color "Set permission ."
 
 print_default "${magenta}Start the PHP built-in web server ...${normal}"
 php -S 0.0.0.0:8000 -t /var/www/html

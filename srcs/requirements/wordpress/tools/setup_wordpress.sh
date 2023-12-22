@@ -73,7 +73,7 @@ print_color "Installed WordPress."
 
 wait_for_mariadb
 
-if wp user list --role="$WP_USER_ROLE" --field=user_login --allow-root --path=/var/www/html 2> /dev/null | grep -q "^$WP_USER$"; then
+if wp user list --role="$WP_USER_ROLE" --field=user_login --allow-root --path=/var/www/html | grep -q "^$WP_USER$"; then
 	print_default "${yellow}WordPress user '$WP_USER' already exists.${normal}"
 else
 	print_default "Creating WordPress user..."
@@ -85,9 +85,6 @@ else
 	print_color "Created WordPress user."
 fi
 
-print_default "Updating all plugins..."
-wp plugin update --all --allow-root --path=/var/www/html
-print_color "All plugins are up to date."
 
 print_default "Configuring WordPress to use Redis as the object cache..."
 wp config set WP_REDIS_HOST redis --allow-root --path=/var/www/html
@@ -106,9 +103,17 @@ print_default "Activating the Redis Object Cache plugin..."
 wp redis enable --force --allow-root --path=/var/www/html
 print_color "Activated the Redis Object Cache plugin."
 
+print_default "Updating all plugins..."
+wp plugin update --all --allow-root --path=/var/www/html
+print_color "All plugins are up to date."
+
 print_default "Flushing the cache to ensure Redis caching starts working..."
 wp cache flush --allow-root --path=/var/www/html
 print_color "Flushed the cache."
+
+print_default "Setting permission ..."
+chmod -R 777 /var/www/html
+print_color "Set permission ."
 
 print_default "Touching /var/www/html/wordpress_ready..."
 touch /var/www/html/wordpress_ready
